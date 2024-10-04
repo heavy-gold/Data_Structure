@@ -9,6 +9,8 @@ To avoid collision it uses separate chaining method.
 
 using namespace std;
 
+/// @brief Structure to store name and address.
+/// It also has a self referential node so that can be used as a linked list.
 struct node
 {
     string name;
@@ -16,6 +18,7 @@ struct node
     struct node *next;
 };
 
+/// @brief Structure that implements HashTable with separate chaining collision avoidance.
 struct HashTable
 {
     int BUCKET;
@@ -28,33 +31,19 @@ struct HashTable
     }
 
     int hashFunction(string key);
-    bool IsKeyExistInHashTable(string key);
     void insert(string key, string value);
     void remove(string key);
     void display();
 };
 
+/// @brief HashFunction that generates a hash value provided key.
+/// @param key String
+/// @return integer indicating hash code of passed key.
 int HashTable::hashFunction(string key)
 {
     int strLen = 0;
     strLen = key.length();
     return strLen%BUCKET;
-}
-
-bool HashTable::IsKeyExistInHashTable(string key)
-{
-    int hashCode = hashFunction(key);
-    struct node *tablePtr = userData[hashCode];
-    
-    while(tablePtr!= nullptr)
-    {
-        if(tablePtr->name == key)
-            return true;
-        
-        tablePtr = tablePtr->next;
-    }
-
-    return false;
 }
 
 /// @brief Function to insert/update user.
@@ -90,6 +79,8 @@ void HashTable::insert(string userName, string userAddress)
     return;
 }
 
+/// @brief To remove userName from hashTable.
+/// @param userName user name that was used to insert user.
 void HashTable::remove(string userName)
 {
     int hashCode = hashFunction(userName);
@@ -132,6 +123,7 @@ void HashTable::remove(string userName)
     cout << "[Info] : " << userName << " does not exists in table" << endl;
 }
 
+/// @brief To display HashTable.
 void HashTable::display()
 {
     for(int currentBucket = 0; currentBucket < BUCKET; currentBucket++)
