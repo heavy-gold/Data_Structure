@@ -1,3 +1,8 @@
+/*
+Program that implements Hash table data structure.
+To avoid collision it uses separate chaining method.
+*/
+
 #include <iostream>
 #include <vector>
 #include <string>
