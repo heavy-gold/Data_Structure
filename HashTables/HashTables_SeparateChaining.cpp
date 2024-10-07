@@ -13,8 +13,8 @@ using namespace std;
 /// It also has a self referential node so that can be used as a linked list.
 struct node
 {
-    string name;
-    string address;
+    string name;    // represent key in hash table
+    string address; // represent value in hash table
     struct node *next;
 };
 
