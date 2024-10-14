@@ -22,6 +22,7 @@ private:
     int HashFunction(string key);  // Hash function that counts hash code.
     void InsertElementToHashTable(int hashCode, string name, string address);
     void DeleteElementFromHashTable(int hashCode);  // Private function that just delete the element
+    int GetIntegerOfEmptyIndex(int hashCode); // Function to get empty index from provided hash value.
 
 public :    
     HashTable(int hashBucket)
@@ -52,50 +53,51 @@ bool HashTable::insert(string name, string address)
 {
     int hashCode;
     int loopCount;
-    if(NumOfElementInserted == BUCKET)
+    int indexToInsertElement;
+    if(NumOfElementInserted > BUCKET)
     {
         cout << "[ERROR] : No space available to insert an element in hash table\n.";
         return false;
     }
 
-    // calculate hash code.
-    hashCode = HashFunction(name);
-
-    // check if HashTable has element not inserted.
-    if(hashPair[hashCode].name.empty())
+    // check if user already exist in the has table or not
+    indexToInsertElement = searchAndGetIndex(name);
+    if(indexToInsertElement != -1)
     {
-        // insert element.
-        InsertElementToHashTable(hashCode, name, address);
-        cout << "[INFO] : Name: " << name << " is inserted to hash table without any conflict.\n";
+        InsertElementToHashTable(indexToInsertElement, name, address);
+        cout << "[INFO] : Address for name : " << name << " updated in the hash table.";
         return true;
     }
 
-    // If element is already inserted, a conflict occurred in hash Table
-    do
-    {
-        if(hashPair[loopCount].name.empty())
-        {
-            InsertElementToHashTable(loopCount, name, address);
-            cout << "[INFO] : Name: " << name << " is inserted to hash table with conflict - solved.\n";
-            return true;
-        }
-        loopCount = (loopCount+1)%BUCKET;
-    } while (loopCount != hashCode);
+    // calculate hash code where an element can be inserted.
+    hashCode = HashFunction(name);
 
-    // The below code should not work. But if we are here, means we have a bug in our algorithm.
-    cout << "[ERROR] : No element is inserted and algorithm seems to have a bug\n";
-    return false;
+    indexToInsertElement = GetIntegerOfEmptyIndex(hashCode);
+
+    if(indexToInsertElement != -1)
+    {
+        InsertElementToHashTable(indexToInsertElement, name, address);
+        cout << "[INFO] : Name : " << name << " is added in the hash table.";
+        return true;
+    }
+    else
+    {
+        // The below code should not work. But if we are here, means we have a bug in our algorithm.
+        cout << "[ERROR] : No element is inserted and algorithm seems to have a bug\n";
+        return false;
+    }
 }
 
 bool HashTable::remove(string name)
 {
     // To store index at which provided name exists in the hash table.
     int nameIndex;
-
     nameIndex = searchAndGetIndex(name);
-    if(nameIndex == -1)
+
+
+    if(nameIndex < 0 || nameIndex >= BUCKET)
     {
-        cout << "[INFO] : Failed to delete provided user from hash table\n";
+        cout << "[INFO] : Index value: " << nameIndex << " out of bound. Failed to remove user";
         return false;
     }
     else
@@ -125,29 +127,18 @@ void HashTable::display()
         }
         else
         {
-            cout << " Name --> " << hashPair[loopCount].name << " Address --> " << hashPair[loopCount].address << endl;
+            cout << " Name --> " << hashPair[loopCount].name << "; Address --> " << hashPair[loopCount].address << endl;
         }
     }
 }
 
 bool HashTable::search(string name)
 {
-    int loopCount;
-    int hashCode = HashFunction(name);
-
-    loopCount = hashCode;
-    do
+    if(searchAndGetIndex(name) == -1)
     {
-        if(hashPair[loopCount].name == name)
-        {
-            cout << "[INFO] : Name '" << name << "' exists in the hash table.\n";
-            return true; 
-        }
-    } while (loopCount != hashCode);
-
-    // Once we are out from the loop, it simply means no such name exist in the hash table.
-    cout << "[INFO] : Name '" << name << "' does not exist in the hash table\n";
-    return false;
+        return false;
+    }
+    return true;
 }
 
 int HashTable::searchAndGetIndex(string name)
@@ -163,10 +154,27 @@ int HashTable::searchAndGetIndex(string name)
             cout << "[INFO] : Name '" << name << "' exists in the hash table.\n";
             return loopCount; 
         }
+        loopCount = (loopCount + 1)%BUCKET;
     } while (loopCount != hashCode);
 
     // Once we are out from the loop, it simply means no such name exist in the hash table.
     cout << "[INFO] : Name '" << name << "' does not exist in the hash table\n";
+    return -1;
+}
+
+int HashTable::GetIntegerOfEmptyIndex(int hashValue)
+{
+    int emptyHashIndex = hashValue;
+    do
+    {
+        if(hashPair[emptyHashIndex].name.empty())
+        {
+            return emptyHashIndex; 
+        }
+        emptyHashIndex = (emptyHashIndex + 1)%BUCKET;
+    } while (emptyHashIndex != hashValue);
+
+    // Indicating no empty index present.
     return -1;
 }
 
