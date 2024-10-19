@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <limits>
+#include "common/common_utils.h"
 
 using namespace std;
 
@@ -52,9 +53,8 @@ int HashTable::HashFunction(string key)
 bool HashTable::insert(string name, string address)
 {
     int hashCode;
-    int loopCount;
     int indexToInsertElement;
-    if(NumOfElementInserted > BUCKET)
+    if(NumOfElementInserted == BUCKET)
     {
         cout << "[ERROR] : No space available to insert an element in hash table\n.";
         return false;
@@ -182,27 +182,14 @@ void HashTable::InsertElementToHashTable(int hashCode, string name, string addre
 {
     hashPair[hashCode].name = name;
     hashPair[hashCode].address = address;
-    NumOfElementInserted++;
+    NumOfElementInserted = NumOfElementInserted + 1;
 }
 
 void HashTable::DeleteElementFromHashTable(int hashCode)
 {
     hashPair[hashCode].name.clear();
     hashPair[hashCode].address.clear();
-    NumOfElementInserted--;
-}
-
-bool getIntegerInput(int& value)
-{
-    if(cin >> value)
-    {
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        return true;
-    }
-
-    cin.clear();
-    cin.ignore(numeric_limits<streamsize>::max(), '\n');
-    return false;
+    NumOfElementInserted = NumOfElementInserted - 1;
 }
 
 int main()
@@ -211,6 +198,7 @@ int main()
     int bucketSize = -1;
     string userName;
     string address;
+    using namespace utils;
 
     cout << "\n Hash Table demo with linear probing conflict resolve algorithm";
     cout << "\n Enter BUCKET size for hash table. Should be between 5 to 5000.\n";
