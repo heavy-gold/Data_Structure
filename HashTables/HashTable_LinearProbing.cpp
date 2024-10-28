@@ -24,6 +24,7 @@ private:
     void InsertElementToHashTable(int hashCode, string name, string address);
     void DeleteElementFromHashTable(int hashCode);  // Private function that just delete the element
     int GetIntegerOfEmptyIndex(int hashCode); // Function to get empty index from provided hash value.
+    int searchAndGetIndex(string key);
 
 public :    
     HashTable(int hashBucket)
@@ -37,7 +38,6 @@ public :
     bool search(string key);
     bool remove(string key);
     void display();
-    int searchAndGetIndex(string key);
 };
 
 /// @brief HashFunction that generates a hash value provided key.

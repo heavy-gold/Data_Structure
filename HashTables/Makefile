@@ -8,7 +8,8 @@ OBJ_DIR = obj
 
 # Targets
 TARGETS = HashTable_LinearProbing \
-		HashTables_SeparateChaining
+		HashTables_SeparateChaining \
+		HashTable_QuadraticProbing
 
 # Create binary paths
 BINARIES = $(addprefix $(BIN_DIR)/, $(TARGETS))
@@ -27,6 +28,9 @@ $(BIN_DIR)/HashTable_LinearProbing: HashTable_LinearProbing.cpp $(COMMON_OBJS)
 	$(CXX) $(CXXFLAGS) $< $(COMMON_OBJS) -o $@
 
 $(BIN_DIR)/HashTables_SeparateChaining: HashTables_SeparateChaining.cpp $(COMMON_OBJS)
+	$(CXX) $(CXXFLAGS) $< $(COMMON_OBJS) -o $@
+
+$(BIN_DIR)/HashTable_QuadraticProbing: HashTable_QuadraticProbing.cpp $(COMMON_OBJS)
 	$(CXX) $(CXXFLAGS) $< $(COMMON_OBJS) -o $@
 
 # Common object files
