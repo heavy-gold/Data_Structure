@@ -17,8 +17,8 @@ BINARIES = $(addprefix $(BIN_DIR)/, $(TARGETS))
 COMMON_OBJS = $(OBJ_DIR)/common_utils.o
 
 # Create directories
-$(shell if not exist $(BIN_DIR) mkdir $(BIN_DIR))
-$(shell if not exist $(OBJ_DIR) mkdir $(OBJ_DIR))
+$(shell mkdir $(BIN_DIR) 2>NUL)
+$(shell mkdir $(OBJ_DIR) 2>NUL)
 
 all:$(BINARIES)
 
@@ -33,10 +33,9 @@ $(BIN_DIR)/HashTables_SeparateChaining: HashTables_SeparateChaining.cpp $(COMMON
 $(OBJ_DIR)/common_utils.o: Common/common_utils.cpp Common/common_utils.h
 	$(CXX) $(CXXFLAGS) -c $< -o $@
 
-# Clean rule
+# Clean rule (Works in Sh/Bash environments)
 clean:
-	if exist $(BIN_DIR)\* del /Q $(BIN_DIR)\*
-	if exist $(OBJ_DIR)\* del /Q $(OBJ_DIR)\*
+	rm -rf $(BIN_DIR) $(OBJ_DIR)
 
 #List targets
 list:
