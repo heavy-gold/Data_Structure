@@ -6,7 +6,6 @@
 
 using namespace std;
 
-
 /// @brief structure that holds name and address of a person
 struct node
 {
