@@ -6,6 +6,7 @@ To avoid collision it uses separate chaining method.
 #include <iostream>
 #include <vector>
 #include <string>
+#include "common/common_utils.h"
 
 using namespace std;
 
@@ -21,18 +22,20 @@ struct node
 /// @brief Structure that implements HashTable with separate chaining collision avoidance.
 struct HashTable
 {
+private:
     int BUCKET;
     vector<node*> userData;
+    int hashFunction(string key);
 
+public:
     HashTable(int bucketSize)
     {
         this->BUCKET = bucketSize;
         userData.resize(this->BUCKET);
     }
-
-    int hashFunction(string key);
-    void insert(string key, string value);
-    void remove(string key);
+    bool insert(string key, string value);
+    bool remove(string key);
+    bool search(string key);
     void display();
 };
 
@@ -49,7 +52,7 @@ int HashTable::hashFunction(string key)
 /// @brief Function to insert/update user.
 /// @param userName 
 /// @param userAddress 
-void HashTable::insert(string userName, string userAddress)
+bool HashTable::insert(string userName, string userAddress)
 {
     int hashCode = hashFunction(userName);
     bool isNameExist = false;
@@ -62,7 +65,7 @@ void HashTable::insert(string userName, string userAddress)
             isNameExist = true;
             tablePtr->address = userAddress;
             cout << "[Warning] : User name has updated " << endl;
-            return;
+            return true;
         }
         tablePtr = tablePtr->next;
     }
@@ -75,13 +78,14 @@ void HashTable::insert(string userName, string userAddress)
         newNode->next = userData[hashCode];
         userData[hashCode] = newNode;
         cout << "[Info] : User name has been added " << endl;
+        return true;
     }
-    return;
+    return false;
 }
 
 /// @brief To remove userName from hashTable.
 /// @param userName user name that was used to insert user.
-void HashTable::remove(string userName)
+bool HashTable::remove(string userName)
 {
     int hashCode = hashFunction(userName);
     struct node *tablePtr = userData[hashCode];
@@ -92,7 +96,7 @@ void HashTable::remove(string userName)
     if(tablePtr == nullptr)
     {
         cout << "[Info] : " << userName << " does not exists in table" << endl;
-        return;
+        return false;
     }
 
     // if node that needed to be deleted is list head
@@ -102,7 +106,7 @@ void HashTable::remove(string userName)
         userData[hashCode] = tablePtr->next;
         delete nodeToDel;
         cout << "[Info] : " << userName << " deleted from table" << endl;
-        return;
+        return true;
     }
 
     tablePtr = prevNode->next;
@@ -115,12 +119,13 @@ void HashTable::remove(string userName)
             prevNode->next = tablePtr->next;
             delete nodeToDel;
             cout << "[Info] : " << userName << " deleted from table" << endl;
-            return;
+            return true;
         }
         prevNode = tablePtr;
         tablePtr = tablePtr->next;
     }
     cout << "[Info] : " << userName << " does not exists in table" << endl;
+    return false;
 }
 
 /// @brief To display HashTable.
@@ -139,6 +144,108 @@ void HashTable::display()
     }
 }
 
+bool HashTable::search(string key)
+{
+    int hashCode = hashFunction(key);
+    struct node *tablePtr = userData[hashCode];
+
+    // check for null linked list
+    if(tablePtr == nullptr)
+    {
+        cout << "[Info] : " << key << " does not exists in table" << endl;
+        return false;
+    }
+
+    // Traverse through list to find and delete node.
+    while(tablePtr != nullptr)
+    {
+        if(tablePtr->name == key)
+        {
+            return true;
+        }
+        tablePtr = tablePtr->next;
+    }
+    return false;
+}
+
+int main()
+{
+    int choice;
+    int bucketSize = -1;
+    string userName;
+    string address;
+    using namespace utils;
+
+    cout << "\n Hash Table demo with linear probing conflict resolve algorithm";
+    cout << "\n Enter BUCKET size for hash table. Should be between 5 to 5000.\n";
+    getIntegerInput(bucketSize);
+    
+    if(bucketSize < 5 || bucketSize > 5000)
+    {
+        cout << "Failed to init Hash table. Size must be in the range of [5,5000]";
+        return -1;
+    }
+
+    HashTable demoHashTable = HashTable(bucketSize);
+
+    while(1)
+    {
+        cout << "\n\nHash Table Operations\n";
+        cout << "1. Insert\n2. Delete\n3. Search\n4. Display\n5. Exit\n";
+        getIntegerInput(choice);
+
+        switch (choice)
+        {
+        case 1:
+            cout << "Enter name : \n";
+            getline(cin, userName);
+            cout << "Enter address : \n";
+            getline(cin, address);
+            demoHashTable.insert(userName, address);
+            break;
+
+        case 2:
+            cout << "Enter name to delete data : \n";
+            getline(cin, userName);
+            if(demoHashTable.remove(userName))
+            {
+                cout << "Data deleted successfully.\n";
+            }
+            else
+            {
+                cout << "Data not found.\n";
+            }
+            break;
+                
+        case 3:
+            cout << "Enter name to look into table\n";
+            getline(cin, userName);
+            if(demoHashTable.search(userName))
+            {
+                cout << "Data found.\n";
+            }
+            else
+            {
+                cout << "Data not found.\n";
+            }
+            break;
+        
+        case 4:
+            demoHashTable.display();
+            break;
+
+        case 5:
+            cout << "Exiting from Hash Table Demo.\n";
+            return 0;
+
+        default:
+            cout << "Please select valid option.\n";
+            break;
+        }
+    }
+}
+
+/*
 /// @brief To test hash table created as above.
 /// @return 
 int main()
@@ -162,7 +269,7 @@ int main()
 
     while(1)
     {
-        
+
         cout << "1. Insert\n";
         cout << "2. Display\n";
         cout << "3. Remove\n";
@@ -199,3 +306,4 @@ int main()
         }
     }
 }
+*/
